@@ -53,6 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       break;
     case 'POST':
         const data = req.body;
+        // console.log(data)
         const stations = await getStationsFromOwner(data.data.owner);
         if (!stations){
             res.status(400).json({error: "No stations found"});
