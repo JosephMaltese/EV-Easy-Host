@@ -61,7 +61,7 @@ function Page() {
       const userStations = await stationResp.json();
       console.log("User stations:", userStations);
       if (userStations) {
-        setStations(userStations);
+        setStations(userStations); // Fix: remove spread operator
       }
     } catch (err) {
       console.error("Error in getOwnedStations:", err);
@@ -74,6 +74,7 @@ function Page() {
   // 2. Create a new station
   // ----------------------------------------
   const handleCreateStation = async (e) => {
+    console.log("Creating station:");
     e.preventDefault();
 const client = createClient();
       const { data, error } = await client.auth.getUser();
@@ -112,7 +113,7 @@ const client = createClient();
     try {
       console.log("Creating station:", newStation);
       
-      const res = await fetch("/api/stationNetwork", {
+      const res = await fetch("/api/hostUsageNetwork", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -201,6 +202,10 @@ const client = createClient();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    console.log("Stations updated:", stations);
+  }, [stations]);
 
   // ----------------------------------------
   // Render
@@ -336,7 +341,7 @@ const client = createClient();
       </div>
 
       <div className="mt-6">
-        <Map stations={stations} />
+        {position && stations && <Map currentLocation={position} stations={stations} />}
       </div>
     </div>
   );

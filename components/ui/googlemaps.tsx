@@ -1,15 +1,13 @@
 "use client"
 import React, { useEffect } from 'react'
 import { Loader } from '@googlemaps/js-api-loader'
-import { info } from 'console';
-import { stat } from 'fs';
 
 interface Location {
     latitude: number;
     longitude: number;
 }
 
-const Map = ({currentLocation, stations}: {currentLocation?: Location, stations?: any[]}) => {
+const Map = ({currentLocation, stations}: {currentLocation: Location, stations: any[]}) => {
 
     const mapRef = React.useRef<HTMLDivElement>(null);
 
@@ -25,23 +23,22 @@ const Map = ({currentLocation, stations}: {currentLocation?: Location, stations?
             const { Marker } = await loader.importLibrary('marker');
             const { InfoWindow } = await loader.importLibrary("maps");
 
-            // const position = {
-            //     lat: currentLocation.latitude, 
-            //     lng: currentLocation.longitude,
-            // }
+            const position = {
+                lat: currentLocation.latitude, 
+                lng: currentLocation.longitude,
+            }
             
 
             // map options
             const mapOptions: google.maps.MapOptions = {
-                center: { lat: -46.7749, lng: -102.4194 },
-                zoom: 5,
+                center: position,
+                zoom: 17,
                 // mapId: 'Map.DEMO_MAP_ID',
             }
 
             // Setup the map
             const map = new Map(mapRef.current as HTMLDivElement, mapOptions);
 
-            if (stations){
 
             stations.forEach((station) => {
                 console.log("Station:", station);
@@ -106,7 +103,7 @@ const Map = ({currentLocation, stations}: {currentLocation?: Location, stations?
     </span>
 ${station.discount === 0 ? '' : '<span style="color: #333; font-weight: bold; font-size: 0.6rem; margin-bottom: 0.3rem;">* Note the discount is already applied</span>'}
     <a 
-        href="https://www.google.com/maps/dir/?api=1&origin=${-46},${-100}&destination=${station.latitude},${station.longitude}" 
+        href="https://www.google.com/maps/dir/?api=1&origin=${position.lat},${position.lng}&destination=${station.latitude},${station.longitude}" 
         target="_blank" 
         style="
             margin-top: 1rem;
@@ -140,16 +137,50 @@ ${station.discount === 0 ? '' : '<span style="color: #333; font-weight: bold; fo
 
             const image = "/car-svgrepo-com (1).svg";
             // put up a marker
+            const marker = new Marker({
+                map: map,
+                position: position,
+                title: "Your Current Location",
+                icon: {
+                    url: image,
+                    scaledSize: new google.maps.Size(50, 50),
+                }
+            })
+
+            const infowindow = new InfoWindow({
+                minWidth: 200,
+                headerContent: `<div style="color: black;">Header</div>`,
+            });
+
+            marker.addListener("click", () => {
+                infowindow.setContent(`
+                    <div style="
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        margin: 0;
+                        marginBottom: 3rem;
+                        padding: 0;
+                    ">
+                            <span style="color: black; font-size: 1rem;">Your Current Location</span>
+                        </div>
+                    </div>
+                `);
+                infowindow.open(map, marker);
+            })
 
         }
-    }
+
         initMap();
 
     }, []);
 
 
     return (
-        <div className="h-4/6 w-[900px]" ref={mapRef} />
+        <div className="h-4/6 min-h-[400px] w-[900px]" ref={mapRef} />
   )
 }
 
