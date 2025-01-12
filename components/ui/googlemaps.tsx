@@ -13,7 +13,10 @@ const Map = ({currentLocation, stations}: {currentLocation: Location, stations: 
 
     useEffect(() => {
         const initMap = async () => {
-            console.log("Map init")
+            console.log("Map init");
+            console.log("Current Location:", currentLocation);
+            console.log("Stations:", stations);
+
             const loader = new Loader({ 
                 apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
                 version: "weekly",
@@ -176,7 +179,7 @@ ${station.discount === 0 ? '' : '<span style="color: #333; font-weight: bold; fo
 
         initMap();
 
-    }, []);
+    }, [currentLocation, stations]);
 
 
     return (

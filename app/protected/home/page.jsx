@@ -61,6 +61,7 @@ function Page() {
       const userStations = await stationResp.json();
       console.log("User stations:", userStations);
       if (userStations) {
+        console.log("Setting stations state");
         setStations(userStations); // Fix: remove spread operator
       }
     } catch (err) {
